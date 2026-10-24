@@ -1,0 +1,29 @@
+{
+  "name": "ml-engineering",
+  "displayName": "Machine Learning & AI Engineering Extensions",
+  "version": "1.0.0",
+  "description": "Production-grade skills and workflows for modern ML/AI engineering: Google's TimesFM (time-series foundation models), SCARF (tabular self-supervised contrastive learning), and Apache Airflow AI SDK / common-ai orchestration.",
+  "author": {
+    "name": "MD. RaKib Hassan Dipu",
+    "github": "https://github.com/rakibdipu"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rakibdipu/ml-engineering-skills"
+  },
+  "keywords": [
+    "timesfm",
+    "time-series",
+    "forecasting",
+    "scarf",
+    "tabular-data",
+    "self-supervised-learning",
+    "contrastive-learning",
+    "airflow",
+    "airflow-ai-sdk",
+    "llm-orchestration",
+    "agentic-ai",
+    "antigravity-skills",
+    "claude-skills"
+  ]
+}
