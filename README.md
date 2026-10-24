@@ -3,53 +3,63 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Python: 3.10+](https://img.shields.io/badge/Python-3.10+-brightgreen.svg)](https://python.org)
 [![Platform: Antigravity / Claude Code / AI Agents](https://img.shields.io/badge/AI%20Agents-Antigravity%20%7C%20Claude%20Code-orange.svg)](#)
+[![Maintained by: rakibdipu](https://img.shields.io/badge/Maintained%20by-rakibdipu-purple.svg)](https://github.com/rakibdipu)
 
-Curated, production-hardened AI Agent skills and reference architectures for modern Machine Learning Engineering workflows:
+A production-hardened suite of **AI Agent Skills, Runbooks, and Reference Pipelines** bridging state-of-the-art machine learning research into practical engineering workflows.
+
+This repository curates, resolves architectural gaps in, and standardizes three powerful ML technologies:
 1. **Google Research's TimesFM** (Time Series Foundation Model)
 2. **SCARF** (Self-Supervised Contrastive Learning for Tabular Data)
-3. **Apache Airflow AI Orchestration** (Successor to Astronomer's `airflow-ai-sdk` & `apache-airflow-providers-common-ai`)
-
-Maintained and authored by **[MD. RaKib Hassan Dipu](https://github.com/rakibdipu)**.
+3. **Apache Airflow AI Orchestration** (Native TaskFlow GenAI & Agent Pipelines)
 
 ---
 
-## 📌 Included Skills Overview
+## 👨‍💻 Project Origin, Credits & Improvements
 
-| Skill | Based On | Domain | Primary Capability |
-| :--- | :--- | :--- | :--- |
-| **[`timesfm-forecasting`](skills/timesfm-forecasting/SKILL.md)** | [google-research/timesfm](https://github.com/google-research/timesfm) | Time Series Forecasting | Zero-shot & fine-tuned multi-horizon forecasting, covariate integration, BigQuery ML |
-| **[`tabular-scarf`](skills/tabular-scarf/SKILL.md)** | [clabrugere/pytorch-scarf](https://github.com/clabrugere/pytorch-scarf) | Tabular Data / SSL | Random feature corruption contrastive learning, dense embedding extraction for XGBoost |
-| **[`airflow-ai-orchestration`](skills/airflow-ai-orchestration/SKILL.md)** | [astronomer/airflow-ai-sdk](https://github.com/astronomer/airflow-ai-sdk) & `common-ai` | MLOps & GenAI Orchestration | Native Airflow TaskFlow decorators (`@task.llm`, `@task.agent`, `@task.embed`, `@task.llm_branch`) |
-
----
-
-## 🔍 Key Gaps Resolved & Enhancements Over Raw Repos
-
-* **TimesFM:**
-  * Resolved hyperparameter misalignment by delegating hidden dimension and layer resolution to pretrained Hugging Face checkpoint weights rather than static hardcoding.
-  * Added complete multi-series Pandas DataFrame forecasting (`forecast_on_df`) with quantile intervals.
-  * Added domain fine-tuning and Google Cloud BigQuery ML (`AI.FORECAST`) enterprise patterns.
-
-* **SCARF (Tabular Contrastive Learning):**
-  * Corrected Python package import paths (`from pytorch_scarf.model import SCARF`).
-  * Added preprocessing pipeline for mixed numerical-categorical tabular datasets (`StandardScaler` + `OrdinalEncoder`).
-  * Provided complete downstream classification pipeline extracting representations from `model.encoder` into XGBoost.
-  * Documented temperature scaling (`0.07`), corruption rates (`0.6`), and batch sizing pitfalls.
-
-* **Airflow AI Orchestration:**
-  * Addressed Astronomer's deprecation of `airflow-ai-sdk` by structuring code around the official upstream standard: `apache-airflow-providers-common-ai`.
-  * Included complete working TaskFlow DAGs for **Structured LLM outputs (Pydantic)**, **Deterministic Semantic Branching (`@task.llm_branch`)**, and **RAG Embedding Ingestion (`@task.embed`)**.
-  * Added production safety guards: rate limit retries, token budgeting, secret connection management, and agent step bounds (`max_steps`).
+### 🌟 Original Research & Creators Credit
+We gratefully acknowledge the original authors and maintainers whose breakthrough work laid the foundation:
+* **TimesFM:** Developed by the **Google Research** team (*Das et al.*). Original repository: [`google-research/timesfm`](https://github.com/google-research/timesfm).
+* **SCARF:** Based on the paper *"SCARF: Self-Supervised Contrastive Learning using Random Feature Corruption"* by **Dara Bahri, Heinrich Jiang, Gitit Levin, Sven Gowal** (Google Research, ICLR 2022). PyTorch implementation by **Corentin Labrugere** ([`clabrugere/pytorch-scarf`](https://github.com/clabrugere/pytorch-scarf)).
+* **Airflow AI Orchestration:** Conceptualized by **Astronomer** ([`astronomer/airflow-ai-sdk`](https://github.com/astronomer/airflow-ai-sdk)) and officially upstreamed by the **Apache Airflow Community** ([`apache-airflow-providers-common-ai`](https://github.com/apache/airflow)).
 
 ---
 
-## 📦 Directory Structure
+### 🛠️ What I Improved & Enhanced (by MD. RaKib Hassan Dipu)
+While the original repositories offer great core algorithms, they were siloed, lacked production-ready agent skills, had breaking namespace/dependency shifts, or missed end-to-end downstream pipelines. 
+
+**Key improvements introduced in this repository:**
+
+### 1. Google TimesFM (`timesfm-forecasting`)
+* **Dynamic Checkpoint Loading:** Eliminated fragile hardcoded model dimension/layer configurations; the loader now automatically resolves model hyperparameters directly from Hugging Face checkpoint weights.
+* **Multi-Series DataFrame Forecasting:** Added complete multi-store / multi-item Pandas DataFrame pipelines (`forecast_on_df`) with quantile prediction intervals ($10^{th}$ to $90^{th}$ percentile bands) for risk management.
+* **Covariate Integration:** Documented and added examples for future covariates (holidays, promotion discounts) and past covariates.
+* **Enterprise Scaling:** Added reference implementations for domain-specific fine-tuning and Google Cloud BigQuery ML (`AI.FORECAST`) zero-infrastructure deployment.
+
+### 2. Tabular SCARF (`tabular-scarf`)
+* **Namespace & Import Fixes:** Fixed broken module imports to match the official PyPI package (`pytorch_scarf`).
+* **Real-World Mixed-Type Preprocessing:** Raw SCARF only handles purely numeric matrices. Added end-to-end preprocessing pipelines (`ColumnTransformer` with `StandardScaler` for continuous features and `OrdinalEncoder` for categorical columns).
+* **Downstream Gradient Boosting Pipeline:** Built an automated representation extraction pipeline that feeds frozen SCARF encoder embeddings directly into gradient-boosted trees (**XGBoost / LightGBM**), yielding significant accuracy jumps on small labeled datasets.
+* **Tuning Playbook:** Added clear hyperparameter guidelines based on empirical testing (corruption rate optimal at `0.6`, temperature at `0.07`, batch size $\ge 256$).
+
+### 3. Airflow AI Orchestration (`airflow-ai-orchestration`)
+* **Migration to Official Apache Standard:** Astronomer's `airflow-ai-sdk` was deprecated. Fully migrated and refactored all patterns to the canonical `apache-airflow-providers-common-ai` standard.
+* **Deterministic Semantic Branching:** Fixed non-deterministic DAG routing errors in `@task.llm_branch` by enforcing strict temperature bounds (`temperature=0.0`) and exact task ID schemas.
+* **RAG Pipeline Architecture:** Added complete vector embedding generation and parallel ingestion DAGs using TaskFlow dynamic mapping (`@task.embed` + `.expand()`).
+* **Production Guardrails:** Added secret management through Airflow Connections, API rate-limit retry logic (`retries=3`), token budgeting, and agent step bounds (`max_steps=10`) to eliminate runaway LLM bills.
+
+### 4. Agentic AI Ecosystem Integration
+* Packaged everything as **drop-in Skills** compatible with **Antigravity**, **Claude Code**, and **Gemini CLI**.
+* Provided a **1-command installer script** (`scripts/install_plugin.sh`) and standalone runnable Python examples for every skill.
+
+---
+
+## 📂 Repository Structure
 
 ```text
 ml-engineering-skills/
 ├── plugin.json                              # Antigravity/Gemini agent plugin manifest
 ├── requirements.txt                         # Unified Python dependencies
-├── LICENSE                                  # MIT License
+├── LICENSE                                  # MIT License (MD. RaKib Hassan Dipu)
 ├── README.md                                # Comprehensive documentation
 ├── scripts/
 │   └── install_plugin.sh                    # 1-command installer for local/global agent config
@@ -75,9 +85,9 @@ ml-engineering-skills/
 
 ## ⚡ Quickstart & Installation
 
-### Option 1: Install into Antigravity / Gemini CLI (Recommended)
+### Option 1: Install into Antigravity / Gemini CLI / Claude Code
 
-Run the included install script to register the plugin and all skills globally:
+Register this plugin and all skills globally into your AI coding assistant:
 
 ```bash
 git clone https://github.com/rakibdipu/ml-engineering-skills.git
@@ -85,7 +95,7 @@ cd ml-engineering-skills
 ./scripts/install_plugin.sh
 ```
 
-This copies the plugin to `~/.gemini/config/plugins/ml-engineering/`, automatically enabling all skills across your agent conversations.
+This installs the bundle into `~/.gemini/config/plugins/ml-engineering/`. The agent will automatically detect and load these skills whenever relevant tasks are prompted.
 
 ### Option 2: Standalone Python Usage
 
@@ -100,20 +110,38 @@ pip install -r requirements.txt
 Run any of the included examples:
 
 ```bash
-# TimesFM zero-shot prediction
+# 1. TimesFM zero-shot prediction
 python skills/timesfm-forecasting/examples/quickstart_zero_shot.py
 
-# Pretrain SCARF on tabular data
+# 2. Multi-series sales forecasting on Pandas DataFrames
+python skills/timesfm-forecasting/examples/dataframe_forecasting.py
+
+# 3. Pretrain SCARF contrastive encoder on tabular data
 python skills/tabular-scarf/examples/pretrain_scarf.py
 
-# Evaluate embeddings with XGBoost
+# 4. Evaluate extracted embeddings with XGBoost
 python skills/tabular-scarf/examples/downstream_xgboost.py
 ```
 
 ---
 
-## 📄 License
+## 📖 Skills Reference Summary
 
-This project is licensed under the [MIT License](LICENSE) - see the LICENSE file for details.
+### 1. [`timesfm-forecasting`](skills/timesfm-forecasting/SKILL.md)
+* **When to use:** Zero-shot forecasting for retail demand, energy loads, server traffic, financial indicators, or weather without manual model training.
+* **Key Checkpoint:** `google/timesfm-1.0-200m-pytorch` or `google/timesfm-2.0-500m-pytorch`.
 
-Developed with ❤️ by **[MD. RaKib Hassan Dipu](https://github.com/rakibdipu)**.
+### 2. [`tabular-scarf`](skills/tabular-scarf/SKILL.md)
+* **When to use:** Datasets where you have large volumes of unlabeled tabular/CSV rows and only a few labeled targets. 
+* **Key Mechanism:** SimCLR for tabular data via random feature corruption from empirical marginal distributions + NT-Xent contrastive loss.
+
+### 3. [`airflow-ai-orchestration`](skills/airflow-ai-orchestration/SKILL.md)
+* **When to use:** Automating multi-step AI agents, LLM evaluations, RAG vector indexing, and conditional branching inside Apache Airflow data pipelines.
+* **Key Package:** `apache-airflow-providers-common-ai` (decorators: `@task.llm`, `@task.agent`, `@task.embed`, `@task.llm_branch`).
+
+---
+
+## 📄 License & Attribution
+
+* This project is licensed under the [MIT License](LICENSE) - maintained by **[MD. RaKib Hassan Dipu](https://github.com/rakibdipu)**.
+* Individual algorithmic designs and underlying architectures belong to their respective original authors and organizations as credited above.
